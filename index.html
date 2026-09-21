@@ -1,72 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RailBook - Train Ticket Booking</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Booking Platform</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --border: #e5e7eb;
+        }
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      background: #f4f6f8;
-      color: #222;
-    }
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    header {
-      background: #0b3d91;
-      color: white;
-      padding: 18px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .booking-container {
+            background: var(--card-bg);
+            max-width: 600px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 30px;
+        }
 
-    header h1 {
-      font-size: 24px;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 20px;
-    }
+        header h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
 
-    .hero {
-      background: linear-gradient(
-          rgba(0, 0, 0, 0.45),
-          rgba(0, 0, 0, 0.45)
-        ),
-        url("https://images.unsplash.com/photo-1474487548417-781cb71495f3")
-        center/cover;
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-      min-height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .search-box {
-      background: white;
-      width: 100%;
-      max-width: 1000px;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
 
-    .search-box h2 {
-      margin-bottom: 20px;
-      color: #0b3d91;
-    }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .row .form-group {
+            flex: 1;
+        }
+
+        .price-summary {
+            background-color: #f3f4f6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .price-row.total {
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 0;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-message h2 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="booking-container" id="bookingApp">
+        <!-- Booking Form Container -->
+        <div id="formSection">
+            <header>
+                <h1>Book Your Tickets</h1>
+                <p>Secure your seats instantly and securely</p>
+            </header>
+
+            <form id="ticketForm" onsubmit="handleBooking(event)">
+                <!-- Personal Info -->
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required placeholder="John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="johndoe@example.com">
+                </div>
+
+                <!-- Destination/Event Selection -->
+                <div class="form-group">
+                    <label for="ticketType">Ticket Category</label>
+                    <select id="ticketType" onchange="calculateTotal()">
+                        <option value="50" selected>Standard - \$50.00</option>
+                        <option value="85">Premium - \$85.00</option>
+                        <option value="150">VIP Experience - \$150.00</option>
+                    </select>
+                </div>
+
+                <!-- Quantity and Date -->
+                <div class="row">
+                    <div class="form-group">
+                        <label for="ticketQuantity">Quantity</label>
+                        <input type="number" id="ticketQuantity" min="1" max="10" value="1" required onchange="calculateTotal()" oninput="calculateTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingDate">Date</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                </div>
+
+                <!-- Live Price Summary -->
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>Price per ticket</span>
+                        <span id="ticketPriceLabel">\$50.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Service fee</span>
+                        <span>\$5.00</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Estimated Total</span>
+                        <span id="totalPriceLabel">\$55.00</span>
+                    </div>
+                </div>
+
+                <button type="submit">Proceed to Payment</button>
+            </form>
+        </div>
+
+        <!-- Dynamic Success Message UI -->
+        <div id="successSection" class="success-message">
+            <h2>🎉 Booking Successful!</h2>
+            <p>Thank you for your purchase. Your ticket details have been sent to your email.</p>
+            <br>
+            <button onclick="resetForm()">Book Another Ticket</button>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum date selector to today's date dynamically
+        document.getElementById('bookingDate').min = new Date().toISOString().split("T")[0];
+
+        function calculateTotal() {
+            const ticketPrice = parseFloat(document.getElementById('ticketType').value);
+            const quantity = parseInt(document.getElementById('ticketQuantity').value) || 0;
+            const serviceFee = 5.00;
+
+            // Simple conditional calculation syntax
+            let subtotal = ticketPrice * quantity;
+            let total = quantity > 0 ? subtotal + serviceFee : 0;
+
+            // Render updates to the UI labels
+            document.getElementById('ticketPriceLabel').innerText = `$${ticketPrice.toFixed(2)}`;
+            document.getElementById('totalPriceLabel').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function handleBooking(event) {
+            event.preventDefault(); // Stop standard form refresh
+            
+            // Switch UI views seamlessly
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('successSection').style.display = 'block';
+        }
+
+        function resetForm() {
+            document.getElementById('ticketForm').reset();
+            calculateTotal();
+            document.getElementById('successSection').style.display = 'none';
+            document.getElementById('formSection').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
